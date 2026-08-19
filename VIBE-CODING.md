@@ -34,12 +34,14 @@ Bỏ qua bất kỳ bước nào → vibe coding biến thành "gambling with co
 > Viết **spec** trước, code sau. Spec là contract giữa bạn và LLM.
 
 **Spec đầy đủ** thường gồm:
+
 - *Inputs:* tên + kiểu + ràng buộc của mỗi tham số
 - *Output:* shape + kiểu + invariants
 - *Behavior:* edge case, lỗi, side-effects
 - *Constraints:* latency budget, memory cap, dependency cấm dùng
 
 Ví dụ:
+
 ```
 Function: search_hybrid(query: str, top_k: int = 10, rrf_k: int = 60)
 Inputs:
@@ -89,15 +91,15 @@ tests làm bộ chống hallucination.
 
 ## Khi nào vibe code, khi nào tự nghĩ?
 
-| Vibe code thoải mái | Tự nghĩ kỹ trước khi prompt |
-|---|---|
-| API route boilerplate (FastAPI, Express, …) | Lựa chọn algorithm / data structure cốt lõi |
-| Pydantic / Zod / Typescript schemas | Concurrency model (lock vs lock-free vs CAS) |
-| Test scaffolding (pytest fixtures, mocks) | Failure semantics (retry, idempotency) |
-| Config files (YAML, JSON, env) | Schema migration / backward compat |
-| README skeleton, docstrings | Security boundary (auth, sandboxing) |
-| Synthetic data generators / fixtures | Performance budget tradeoffs |
-| Error handling cho I/O (try/except boilerplate) | Cache invalidation strategy |
+| Vibe code thoải mái                             | Tự nghĩ kỹ trước khi prompt                  |
+| ------------------------------------------------- | ------------------------------------------------- |
+| API route boilerplate (FastAPI, Express, …)      | Lựa chọn algorithm / data structure cốt lõi   |
+| Pydantic / Zod / Typescript schemas               | Concurrency model (lock vs lock-free vs CAS)      |
+| Test scaffolding (pytest fixtures, mocks)         | Failure semantics (retry, idempotency)            |
+| Config files (YAML, JSON, env)                    | Schema migration / backward compat                |
+| README skeleton, docstrings                       | Security boundary (auth, sandboxing)              |
+| Synthetic data generators / fixtures              | Performance budget tradeoffs                      |
+| Error handling cho I/O (try/except boilerplate)   | Cache invalidation strategy                       |
 | Refactor "đổi tên field X → Y" trên cả repo | Architecture (vector vs graph, monolith vs micro) |
 
 **Quy tắc đơn giản:** nếu bug sẽ là *silent regression* (hệ thống chạy
@@ -179,13 +181,14 @@ Vòng 4: Bạn review diff line-by-line.
 Lab này khuyến khích **CLI vibe-coding** — git-native, terminal-friendly,
 review diff dễ. Ba CLI tool nổi bật 2026:
 
-| Tool | Best at | Weak at |
-|---|---|---|
-| **Claude Code** (Anthropic) | Multi-file plans, careful edits, longer reasoning, in-terminal TodoWrite + plan mode | Slower cho 1-line fixes; cần Anthropic API key hoặc subscription |
-| **Codex CLI** (OpenAI) | Fast iteration, tight integration với GPT/o1 family, agent mode chạy command thực | Mới hơn, ecosystem still evolving; cần OpenAI key |
-| **OpenCode** (open-source) | Terminal-first TUI, multi-provider (Anthropic/OpenAI/local Ollama), no vendor lock-in | Smaller community than Claude Code; cần config provider lần đầu |
+| Tool                              | Best at                                                                               | Weak at                                                             |
+| --------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| **Claude Code** (Anthropic) | Multi-file plans, careful edits, longer reasoning, in-terminal TodoWrite + plan mode  | Slower cho 1-line fixes; cần Anthropic API key hoặc subscription  |
+| **Codex CLI** (OpenAI)      | Fast iteration, tight integration với GPT/o1 family, agent mode chạy command thực  | Mới hơn, ecosystem still evolving; cần OpenAI key                |
+| **OpenCode** (open-source)  | Terminal-first TUI, multi-provider (Anthropic/OpenAI/local Ollama), no vendor lock-in | Smaller community than Claude Code; cần config provider lần đầu |
 
 **Why CLI over IDE?** Trong terminal bạn dễ:
+
 - Review diff (`git diff`) trước khi accept
 - Pipe output qua tools khác (`benchmark.py | grep PASS`)
 - Reproduce y hệt trên server / CI / pair programming session
@@ -193,6 +196,7 @@ review diff dễ. Ba CLI tool nổi bật 2026:
 
 **Project conventions file** — commit 1 file ở repo root để CLI tool tự
 đọc + respect, giảm prompt boilerplate:
+
 - `CLAUDE.md` — Claude Code
 - `AGENTS.md` — Codex CLI, OpenCode (de-facto standard 2025+)
 

@@ -35,9 +35,13 @@ proc = subprocess.Popen(
     cwd=str(ROOT),
 )
 
-# Đợi server up + warm (Searcher.from_corpus loads embeddings + indexes 1000 docs)
+# Đợi server up + warm (Searcher.from_corpus loads embeddings + indexes 1000 docs).
+# 300s, không phải 30-60s: trên filesystem chậm (vd. WSL mount sang ổ Windows
+# qua /mnt/c), riêng bước index 1000 doc đã đo được ~220s -- I/O cross-filesystem
+# là nút thắt, không phải embedding tính toán chậm.
 URL = "http://localhost:8000"
-for _ in range(60):
+READY_TIMEOUT_S = 300
+for _ in range(READY_TIMEOUT_S):
     try:
         r = httpx.get(f"{URL}/healthz", timeout=2.0)
         if r.status_code == 200 and r.json().get("ready"):
@@ -46,7 +50,7 @@ for _ in range(60):
         pass
     time.sleep(1)
 else:
-    raise RuntimeError("API didn't become ready within 60s")
+    raise RuntimeError(f"API didn't become ready within {READY_TIMEOUT_S}s")
 
 print(httpx.get(f"{URL}/healthz").json())
 
@@ -128,7 +132,11 @@ else:
 
 # %%
 proc.terminate()
-proc.wait(timeout=5)
+try:
+    proc.wait(timeout=10)
+except subprocess.TimeoutExpired:
+    proc.kill()
+    proc.wait(timeout=5)
 print("API server stopped")
 
 # %% [markdown]

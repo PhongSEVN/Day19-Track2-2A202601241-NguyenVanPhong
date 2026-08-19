@@ -183,9 +183,18 @@ else:
 
 # %%
 import pandas as pd
+# make_user_profile() timestamps u_{i} at NOW - (i % 48) hours, so u_001's
+# feature row is NOW-1h, u_002's is NOW-2h, u_003's is NOW-3h. Query each
+# entity 30 minutes AFTER its own recorded event -- querying any earlier than
+# that would correctly return NULL (PIT join must never use a future value),
+# which is the right behavior but not what this demo wants to show.
 entity_df = pd.DataFrame({
     "user_id": ["u_001", "u_002", "u_003"],
-    "event_timestamp": [NOW - timedelta(hours=2), NOW - timedelta(hours=1), NOW],
+    "event_timestamp": [
+        NOW - timedelta(hours=1) + timedelta(minutes=30),
+        NOW - timedelta(hours=2) + timedelta(minutes=30),
+        NOW - timedelta(hours=3) + timedelta(minutes=30),
+    ],
 })
 
 historical = fs.get_historical_features(
